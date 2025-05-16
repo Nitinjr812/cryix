@@ -1,17 +1,67 @@
-import React from 'react'
-import { Route, Router, Routes } from 'react-router-dom'
-import Home from '../pages/Home' 
-import MiningPage from '../pages/MiningPage' 
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import LoginPage from '../pages/LoginPage';
+import RegisterPage from '../pages/RegisterPage';
+import Dashboard from '../pages/Dashboard';
+import Home from '../pages/Home'; // Import Home component
 
-const Approutes = () => {
+// Protected route component
+const ProtectedRoute = ({ children }) => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        return <Navigate to="/login" replace />;
+    }
+
+    return children;
+};
+
+// Redirect if already logged in
+const RedirectIfLoggedIn = ({ children }) => {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+        return <Navigate to="/dashboard" replace />;
+    }
+
+    return children;
+};
+
+function Approutes() {
     return (
         <>
+            <ToastContainer position="top-right" autoClose={5000} />
             <Routes>
-                <Route path='/' element={<Home />} />
-                <Route path='/minings' element={<MiningPage />} /> 
+                <Route 
+                    path="/login" 
+                    element={
+                        <RedirectIfLoggedIn>
+                            <LoginPage />
+                        </RedirectIfLoggedIn>
+                    } 
+                />
+                <Route 
+                    path="/register" 
+                    element={
+                        <RedirectIfLoggedIn>
+                            <RegisterPage />
+                        </RedirectIfLoggedIn>
+                    } 
+                />
+                <Route
+                    path="/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route path="/" element={<Home />} /> {/* Home as landing page */}
             </Routes>
         </>
-    )
+    );
 }
 
-export default Approutes
+export default Approutes;
