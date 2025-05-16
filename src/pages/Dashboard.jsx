@@ -11,9 +11,8 @@ const Toast = ({ message, type, onClose }) => {
   }, [onClose]);
 
   return (
-    <div className={`fixed top-4 right-4 px-4 py-2 rounded-md shadow-lg ${
-      type === 'success' ? 'bg-green-500' : 'bg-red-500'
-    } text-white z-50 transition-opacity duration-300`}>
+    <div className={`fixed top-4 right-4 px-4 py-2 rounded-md shadow-lg ${type === 'success' ? 'bg-green-500' : 'bg-red-500'
+      } text-white z-50 transition-opacity duration-300`}>
       {message}
     </div>
   );
@@ -30,7 +29,7 @@ const Dashboard = () => {
   const [miningCountdown, setMiningCountdown] = useState(null);
   const [isMining, setIsMining] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
-  
+
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
   };
@@ -57,29 +56,29 @@ const Dashboard = () => {
     try {
       // Log the token to verify it exists and has a proper format
       console.log('Using token:', token);
-      
-      const response = await fetch('http://localhost:8080/user', {
-        headers: { 
+
+      const response = await fetch('https://cryix-backend.vercel.app/user', {
+        headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      
+
       const data = await response.json();
       console.log('User data response:', data);
-      
+
       if (data.success) {
         const userData = data.user;
         setUser(userData);
         setBalance(userData.balance);
-        
+
         if (userData.nextMineTime) {
           setNextMineTime(new Date(userData.nextMineTime));
-          
+
           // Check if user can mine now
           const now = new Date().getTime();
           const mineTime = new Date(userData.nextMineTime).getTime();
@@ -93,7 +92,7 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
-      
+
       // If unauthorized or token expired
       if (error.message && error.message.includes('401')) {
         localStorage.removeItem('token');
@@ -101,12 +100,12 @@ const Dashboard = () => {
         navigate('/login');
         return;
       }
-      
+
       // Fallback to localStorage for nextMineTime if API call fails
       const storedNextMineTime = localStorage.getItem('nextMineTime');
       if (storedNextMineTime) {
         setNextMineTime(new Date(storedNextMineTime));
-        
+
         // Check if user can mine now
         const now = new Date().getTime();
         const mineTime = new Date(storedNextMineTime).getTime();
@@ -126,7 +125,7 @@ const Dashboard = () => {
         const now = new Date().getTime();
         const mineTime = new Date(nextMineTime).getTime();
         const difference = mineTime - now;
-        
+
         if (difference <= 0) {
           setCanMine(true);
           setTimeLeft('Ready to mine!');
@@ -139,7 +138,7 @@ const Dashboard = () => {
         }
       }
     }, 1000);
-    
+
     return () => clearInterval(timer);
   }, [nextMineTime]);
 
@@ -172,9 +171,9 @@ const Dashboard = () => {
 
   const completeMining = async () => {
     if (isLoading) return; // Prevent duplicate calls
-    
+
     setIsLoading(true);
-    
+
     const token = localStorage.getItem('token');
     if (!token) {
       showToast("Authentication token missing. Please login again.", "error");
@@ -183,28 +182,28 @@ const Dashboard = () => {
       navigate('/login');
       return;
     }
-    
+
     try {
       // Make API call to the backend mining endpoint
       console.log('Sending mining request with token:', token);
-      
-      const response = await fetch('http://localhost:8080/mine', {
+
+      const response = await fetch('https://cryix-backend.vercel.app/mine', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
         console.error('Mining request failed:', response.status, errorText);
         throw new Error(`HTTP error! Status: ${response.status}, ${errorText}`);
       }
-      
+
       const data = await response.json();
       console.log('Mining response:', data);
-      
+
       if (data.success) {
         setBalance(data.newBalance);
         setNextMineTime(new Date(data.nextMineTime));
@@ -216,7 +215,7 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error('Mining error:', error);
-      
+
       // Check if unauthorized
       if (error.message && error.message.includes('401')) {
         localStorage.removeItem('token');
@@ -235,10 +234,10 @@ const Dashboard = () => {
     // Clear all relevant localStorage items
     localStorage.removeItem('token');
     localStorage.removeItem('nextMineTime');
-    
+
     // Show toast notification
     showToast("Logged out successfully", "success");
-    
+
     // Redirect to login page after a short delay
     setTimeout(() => {
       navigate('/login');
@@ -272,7 +271,7 @@ const Dashboard = () => {
             Logout
           </button>
         </div>
-        
+
         <div className="bg-gray-800 bg-opacity-50 rounded-xl p-8 shadow-2xl backdrop-blur-sm mb-6">
           <div className="flex justify-between items-center mb-6">
             <div>
@@ -285,10 +284,10 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="bg-gray-800 bg-opacity-50 rounded-xl p-8 shadow-2xl backdrop-blur-sm">
           <h2 className="text-2xl font-bold text-white mb-6">Mine Coins</h2>
-          
+
           {isMining ? (
             <div className="bg-gray-700 bg-opacity-70 rounded-xl p-8 mb-6 text-center">
               <h3 className="text-2xl font-bold text-yellow-400 mb-4">Mining in Progress</h3>
@@ -309,21 +308,20 @@ const Dashboard = () => {
                   {canMine ? 'Ready to mine now!' : timeLeft}
                 </p>
               </div>
-              
+
               <button
                 onClick={startMining}
                 disabled={!canMine || isLoading}
-                className={`px-8 py-4 rounded-lg font-bold text-lg transition ${
-                  !canMine || isLoading
+                className={`px-8 py-4 rounded-lg font-bold text-lg transition ${!canMine || isLoading
                     ? 'bg-gray-600 cursor-not-allowed'
                     : 'bg-yellow-600 hover:bg-yellow-700 animate-pulse'
-                } text-white`}
+                  } text-white`}
               >
                 {isLoading ? 'Mining...' : canMine ? 'Mine Coin' : 'Wait Time Remaining'}
               </button>
             </div>
           )}
-          
+
           <div className="bg-gray-700 bg-opacity-50 rounded-lg p-4">
             <p className="text-gray-300">
               Mining process: Wait 10 seconds to mine 1 coin. After mining, there's a 12-hour cooldown before you can mine again.

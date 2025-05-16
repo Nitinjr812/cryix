@@ -32,7 +32,7 @@ const LoginPage = () => {
     setIsLoading(true);
     
     try {
-      const { data } = await axios.post('http://localhost:8080/login', formData);
+      const { data } = await axios.post('https://cryix-backend.vercel.app/login', formData);
       
       if (data.success) {
         // Store token in localStorage

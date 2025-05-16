@@ -38,7 +38,7 @@ const RegisterPage = () => {
         password: formData.password
       };
       
-      const { data } = await axios.post('http://localhost:8080/register', signupData);
+      const { data } = await axios.post('https://cryix-backend.vercel.app/register', signupData);
       
       if (data.success) {
         toast.success(data.message || 'Signup successful!');

@@ -10,7 +10,7 @@ const Rest = () => {
         console.log(data)
     }
     const handlesubmit = () => {
-        axios.post("http://localhost:8080/rest",data).then((res)=>{
+        axios.post("https://cryix-backend.vercel.app/rest",data).then((res)=>{
             console.log(res)
         }).catch((err)=>{
             console.log(err)
