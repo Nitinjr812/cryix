@@ -7,3 +7,9 @@
   to = "https://cryix-backend.vercel.app/api/:splat"
   status = 200
   force = true
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  

@@ -143,7 +143,6 @@ const Dashboard = () => {
     }
   };
 
-  // Timer for cooldown countdown
   useEffect(() => {
     const timer = setInterval(() => {
       if (nextMineTime) {
@@ -167,7 +166,6 @@ const Dashboard = () => {
     return () => clearInterval(timer);
   }, [nextMineTime]);
 
-  // Mining countdown timer
   useEffect(() => {
     let countdownTimer;
     if (isMining && miningCountdown !== null) {
