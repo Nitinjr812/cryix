@@ -6,8 +6,9 @@ import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import Dashboard from '../pages/Dashboard';
 import Home from '../pages/Home'; // Import Home component
-
-// Protected route component
+import AboutUs from '../pages/AboutUs'; 
+import PrivacyPolicySection from '../pages/PrivacyPolicySection';
+ 
 const ProtectedRoute = ({ children }) => {
     const token = localStorage.getItem('token');
 
@@ -32,7 +33,7 @@ const RedirectIfLoggedIn = ({ children }) => {
 function Approutes() {
     return (
         <>
-            <ToastContainer position="top-right" autoClose={5000} />
+            <ToastContainer position="top-right" autoClose={3000} /> 
             <Routes>
                 <Route 
                     path="/login" 
@@ -59,6 +60,8 @@ function Approutes() {
                     }
                 />
                 <Route path="/" element={<Home />} /> {/* Home as landing page */}
+                <Route path="/about" element={<AboutUs />} />  
+                <Route path="/policy" element={<PrivacyPolicySection />} />  
             </Routes>
         </>
     );

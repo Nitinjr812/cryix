@@ -1,6 +1,6 @@
 import axios from 'axios';
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -9,10 +9,23 @@ const RegisterPage = () => {
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    referralCode: ''
   });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const referralCode = params.get('ref');
+    if (referralCode) {
+      setFormData(prevData => ({
+        ...prevData,
+        referralCode
+      }));
+    }
+  }, [location.search]);
 
   const handleChange = (e) => {
     setFormData({
@@ -23,23 +36,24 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-     
+
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
       return;
     }
-    
+
     setIsLoading(true);
-    
-    try { 
+
+    try {
       const signupData = {
         username: formData.username,
         email: formData.email,
-        password: formData.password
+        password: formData.password,
+        referralCode: formData.referralCode || null
       };
-      
+
       const { data } = await axios.post('https://cryix-backend.vercel.app/register', signupData);
-      
+
       if (data.success) {
         toast.success(data.message || 'Signup successful!');
         navigate('/login');
@@ -48,8 +62,8 @@ const RegisterPage = () => {
       }
     } catch (error) {
       const errorMessage = error.response?.data?.message ||
-                          error.message ||
-                          'Signup failed. Please try again.';
+        error.message ||
+        'Signup failed. Please try again.';
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -62,7 +76,7 @@ const RegisterPage = () => {
         <h1 className="text-3xl font-bold text-center mb-8 text-white">
           Create Account
         </h1>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="username" className="block text-sm font-medium mb-1 text-gray-300">
@@ -78,7 +92,7 @@ const RegisterPage = () => {
               required
             />
           </div>
-          
+
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-1 text-gray-300">
               Email
@@ -93,7 +107,7 @@ const RegisterPage = () => {
               required
             />
           </div>
-          
+
           <div>
             <label htmlFor="password" className="block text-sm font-medium mb-1 text-gray-300">
               Password
@@ -108,7 +122,7 @@ const RegisterPage = () => {
               required
             />
           </div>
-          
+
           <div>
             <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1 text-gray-300">
               Confirm Password
@@ -123,7 +137,27 @@ const RegisterPage = () => {
               required
             />
           </div>
-          
+
+          <div>
+            <label htmlFor="referralCode" className="block text-sm font-medium mb-1 text-gray-300">
+              Referral Code (Optional)
+            </label>
+            <input
+              type="text"
+              id="referralCode"
+              name="referralCode"
+              value={formData.referralCode}
+              onChange={handleChange}
+              className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
+              placeholder="Enter referral code if you have one"
+            />
+            {formData.referralCode && (
+              <p className="mt-1 text-sm text-green-400">
+                Referral code applied! You'll get a 0.2 coin mining bonus.
+              </p>
+            )}
+          </div>
+
           <button
             type="submit"
             disabled={isLoading}
@@ -134,7 +168,7 @@ const RegisterPage = () => {
             {isLoading ? 'Creating Account...' : 'Sign Up'}
           </button>
         </form>
-        
+
         <div className="mt-6 text-center">
           <Link to="/login" className="text-blue-400 hover:text-blue-300 underline">
             Already have an account? Login here

@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const miningBenefits = [
   {
@@ -29,7 +30,13 @@ const miningBenefits = [
   }
 ];
 
+
 const Mining = () => {
+  const go = useNavigate()
+  const handle = () => {
+    go("/register")
+
+  }
   return (
     <section id="mining" className="bg-gradient-to-br from-gray-900 to-gray-800 py-16 px-4">
       <div className="max-w-4xl mx-auto">
@@ -92,6 +99,7 @@ const Mining = () => {
             whileHover={{ scale: 1.03, boxShadow: "0 0 20px rgba(34, 211, 238, 0.3)" }}
             whileTap={{ scale: 0.97 }}
             className="relative overflow-hidden px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full font-bold text-white shadow-lg shadow-cyan-500/30"
+            onClick={handle}
           >
             <span className="relative z-10">Start Mining Now</span>
             <motion.span

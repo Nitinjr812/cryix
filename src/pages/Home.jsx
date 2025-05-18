@@ -7,6 +7,7 @@ import About from '../components/About';
 import Mining from '../components/Mining';
 import Footer from '../components/Footer';
 import RoadmapItem from '../components/RoadmapItem';
+import FAQSection from './FAQSection';
 
 const Home = () => {
     return (
@@ -21,8 +22,8 @@ const Home = () => {
                 <Stats />
                 {/* About Section */}
                 <About />
-                {/* Mining Section */} 
-                <Mining/>
+                {/* Mining Section */}
+                <Mining />
                 {/* Roadmap Section */}
                 <RoadmapItem />
 
@@ -47,6 +48,8 @@ const Home = () => {
                         </motion.button>
                     </div>
                 </motion.section>
+                {/* -----faq's----- */}
+                <FAQSection/>
 
                 {/* Footer */}
                 <Footer />
