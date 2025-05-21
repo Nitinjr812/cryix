@@ -43,8 +43,7 @@ const Navbar = () => {
             if (location.pathname !== '/') {
                 // Navigate to home and then scroll to the section
                 navigate('/', { state: { scrollTo: href } });
-            } else {
-                // Already on home page, just scroll
+            } else { 
                 scrollToSection(href);
             }
         }
