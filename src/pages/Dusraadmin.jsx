@@ -26,7 +26,7 @@ const AdminPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [error, setError] = useState(null);
   const [adminInfo, setAdminInfo] = useState({ username: 'Admin' });
-  const [sortConfig, setSortConfig] = useState({ key: 'createdAt', direction: 'descending' }); // Default to newest first
+  const [sortConfig, setSortConfig] = useState({ key: 'username', direction: 'ascending' });
   const [selectedUser, setSelectedUser] = useState(null);
   const [isEditingBalance, setIsEditingBalance] = useState(false);
   const [newBalance, setNewBalance] = useState(0);
@@ -130,7 +130,7 @@ const AdminPage = () => {
     navigate('/admin/login');
   };
 
-  // Handle sorting - Enhanced for better date sorting
+  // Handle sorting
   const requestSort = (key) => {
     let direction = 'ascending';
     if (sortConfig.key === key && sortConfig.direction === 'ascending') {
@@ -143,24 +143,10 @@ const AdminPage = () => {
     const sortableUsers = [...filteredUsers];
     if (sortConfig.key) {
       sortableUsers.sort((a, b) => {
-        let aValue = a[sortConfig.key];
-        let bValue = b[sortConfig.key];
-        
-        // Special handling for date fields
-        if (sortConfig.key === 'createdAt') {
-          aValue = new Date(aValue);
-          bValue = new Date(bValue);
-        }
-        
-        // Handle null/undefined values
-        if (aValue == null && bValue == null) return 0;
-        if (aValue == null) return sortConfig.direction === 'ascending' ? 1 : -1;
-        if (bValue == null) return sortConfig.direction === 'ascending' ? -1 : 1;
-        
-        if (aValue < bValue) {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
         }
-        if (aValue > bValue) {
+        if (a[sortConfig.key] > b[sortConfig.key]) {
           return sortConfig.direction === 'ascending' ? 1 : -1;
         }
         return 0;
@@ -268,32 +254,10 @@ const AdminPage = () => {
     }
   };
 
-  // Format date with more detailed info
+  // Format date
   const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const options = { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    };
-    return date.toLocaleDateString(undefined, options);
-  };
-
-  // Get relative time (e.g., "3 days ago")
-  const getRelativeTime = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMs = now - date;
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-    
-    if (diffInDays === 0) return 'Today';
-    if (diffInDays === 1) return '1 day ago';
-    if (diffInDays < 7) return `${diffInDays} days ago`;
-    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
-    if (diffInDays < 365) return `${Math.floor(diffInDays / 30)} months ago`;
-    return `${Math.floor(diffInDays / 365)} years ago`;
+    const options = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   // Check if mining is available
@@ -301,14 +265,6 @@ const AdminPage = () => {
     if (!nextMineTime) return true;
     return new Date() > new Date(nextMineTime);
   };
-
-  // Quick sort buttons
-  const quickSortButtons = [
-    { key: 'createdAt', direction: 'descending', label: 'Newest First', icon: '↓' },
-    { key: 'createdAt', direction: 'ascending', label: 'Oldest First', icon: '↑' },
-    { key: 'balance', direction: 'descending', label: 'Highest Balance', icon: '$' },
-    { key: 'username', direction: 'ascending', label: 'A-Z', icon: 'A' }
-  ];
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -393,41 +349,21 @@ const AdminPage = () => {
         {/* Users Table Section */}
         <div className="bg-white shadow-sm rounded-lg border border-gray-200">
           <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex flex-col space-y-4">
-              <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-                <h2 className="text-lg font-medium text-gray-900 mb-3 md:mb-0">User Management</h2>
-                <div className="flex items-center w-full md:w-auto">
-                  <div className="relative w-full md:w-64">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Search size={18} className="text-gray-400" />
-                    </div>
-                    <input
-                      type="text"
-                      className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                      placeholder="Search users..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+              <h2 className="text-lg font-medium text-gray-900 mb-3 md:mb-0">User Management</h2>
+              <div className="flex items-center w-full md:w-auto">
+                <div className="relative w-full md:w-64">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Search size={18} className="text-gray-400" />
                   </div>
+                  <input
+                    type="text"
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    placeholder="Search users..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
-              </div>
-              
-              {/* Quick Sort Buttons */}
-              <div className="flex flex-wrap gap-2">
-                <span className="text-sm text-gray-600 mr-2 self-center">Quick sort:</span>
-                {quickSortButtons.map((button, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setSortConfig({ key: button.key, direction: button.direction })}
-                    className={`px-3 py-1 text-xs rounded-full border transition-colors ${
-                      sortConfig.key === button.key && sortConfig.direction === button.direction
-                        ? 'bg-indigo-100 text-indigo-700 border-indigo-300'
-                        : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
-                    }`}
-                  >
-                    {button.icon} {button.label}
-                  </button>
-                ))}
               </div>
             </div>
           </div>
@@ -533,13 +469,8 @@ const AdminPage = () => {
                             <span className="text-gray-500">Unknown</span>
                           )}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-gray-900 text-sm font-medium">
-                            {formatDate(user.createdAt)}
-                          </div>
-                          <div className="text-gray-500 text-xs">
-                            {getRelativeTime(user.createdAt)}
-                          </div>
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-500">
+                          {formatDate(user.createdAt)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                           <button 
