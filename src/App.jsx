@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function App() {
   return (
     <>
-      <AdsterraAds />
+      {/* <AdsterraAds /> */}
       <AdsterraSocialBar />
       <Approutes />
     </>
