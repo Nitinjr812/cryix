@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Search, 
-  Users, 
-  DollarSign, 
-  Mail, 
-  User, 
-  RefreshCw, 
-  Bell, 
-  LogOut, 
-  Pencil, 
-  Trash2, 
-  ChevronDown, 
-  ChevronUp, 
-  CheckCircle, 
+import {
+  Search,
+  Users,
+  DollarSign,
+  Mail,
+  User,
+  RefreshCw,
+  Bell,
+  LogOut,
+  Pencil,
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+  CheckCircle,
   XCircle,
   Clock
 } from 'lucide-react';
@@ -31,7 +31,7 @@ const AdminPage = () => {
   const [isEditingBalance, setIsEditingBalance] = useState(false);
   const [newBalance, setNewBalance] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,13 +54,12 @@ const AdminPage = () => {
     try {
       // Get admin token
       const adminToken = localStorage.getItem('adminToken');
-      
+
       if (!adminToken) {
         navigate('/admin/login');
         return;
       }
 
-      // Try to fetch with the admin token first
       try {
         const response = await axios.get('https://cryix-backend.vercel.app/admin/users', {
           headers: {
@@ -95,7 +94,7 @@ const AdminPage = () => {
     try {
       // Fall back to the public endpoint
       const response = await axios.get('https://cryix-backend.vercel.app/allusers');
-      
+
       if (response.data.success) {
         console.log('Public API Response:', response.data);
         setUsers(response.data.users || []);
@@ -145,18 +144,18 @@ const AdminPage = () => {
       sortableUsers.sort((a, b) => {
         let aValue = a[sortConfig.key];
         let bValue = b[sortConfig.key];
-        
+
         // Special handling for date fields
         if (sortConfig.key === 'createdAt') {
           aValue = new Date(aValue);
           bValue = new Date(bValue);
         }
-        
+
         // Handle null/undefined values
         if (aValue == null && bValue == null) return 0;
         if (aValue == null) return sortConfig.direction === 'ascending' ? 1 : -1;
         if (bValue == null) return sortConfig.direction === 'ascending' ? -1 : 1;
-        
+
         if (aValue < bValue) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
         }
@@ -182,19 +181,19 @@ const AdminPage = () => {
   // Update user balance
   const updateBalance = async () => {
     if (!selectedUser) return;
-    
+
     try {
       // Get admin token
       const adminToken = localStorage.getItem('adminToken');
-      
+
       if (!adminToken) {
         toast.error('Admin authentication required');
         navigate('/admin/login');
         return;
       }
-      
+
       const response = await axios.patch(
-        `https://cryix-backend.vercel.app/admin/users/${selectedUser._id}/balance`, 
+        `https://cryix-backend.vercel.app/admin/users/${selectedUser._id}/balance`,
         { balance: parseFloat(newBalance) },
         {
           headers: {
@@ -202,7 +201,7 @@ const AdminPage = () => {
           }
         }
       );
-      
+
       if (response.data.success) {
         // Update local state
         const updatedUsers = users.map(user => {
@@ -211,7 +210,7 @@ const AdminPage = () => {
           }
           return user;
         });
-        
+
         setUsers(updatedUsers);
         setIsEditingBalance(false);
         toast.success(`Balance updated for ${selectedUser.username}`);
@@ -229,17 +228,17 @@ const AdminPage = () => {
     if (!window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
       return;
     }
-    
+
     try {
       // Get admin token
       const adminToken = localStorage.getItem('adminToken');
-      
+
       if (!adminToken) {
         toast.error('Admin authentication required');
         navigate('/admin/login');
         return;
       }
-      
+
       const response = await axios.delete(
         `https://cryix-backend.vercel.app/admin/users/${userId}`,
         {
@@ -248,16 +247,16 @@ const AdminPage = () => {
           }
         }
       );
-      
+
       if (response.data.success) {
         // Update local state
         const updatedUsers = users.filter(user => user._id !== userId);
         setUsers(updatedUsers);
-        
+
         if (selectedUser && selectedUser._id === userId) {
           setSelectedUser(null);
         }
-        
+
         toast.success('User deleted successfully');
       } else {
         toast.error('Failed to delete user: ' + (response.data.message || 'Unknown error'));
@@ -271,9 +270,9 @@ const AdminPage = () => {
   // Format date with more detailed info
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    const options = { 
-      year: 'numeric', 
-      month: 'short', 
+    const options = {
+      year: 'numeric',
+      month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
@@ -287,7 +286,7 @@ const AdminPage = () => {
     const now = new Date();
     const diffInMs = now - date;
     const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-    
+
     if (diffInDays === 0) return 'Today';
     if (diffInDays === 1) return '1 day ago';
     if (diffInDays < 7) return `${diffInDays} days ago`;
@@ -295,7 +294,25 @@ const AdminPage = () => {
     if (diffInDays < 365) return `${Math.floor(diffInDays / 30)} months ago`;
     return `${Math.floor(diffInDays / 365)} years ago`;
   };
+  // Get time remaining for mining cooldown
+  const getMiningTimeRemaining = (nextMineTime) => {
+    if (!nextMineTime) return null;
 
+    const now = new Date();
+    const mineTime = new Date(nextMineTime);
+    const diff = mineTime - now;
+
+    if (diff <= 0) return null;
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    if (hours > 0) {
+      return `${hours}h ${minutes}m remaining`;
+    } else {
+      return `${minutes}m remaining`;
+    }
+  };
   // Check if mining is available
   const isMiningAvailable = (nextMineTime) => {
     if (!nextMineTime) return true;
@@ -323,7 +340,7 @@ const AdminPage = () => {
               <h1 className="text-2xl font-bold text-gray-900">Cryix Admin</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <button 
+              <button
                 className="bg-indigo-100 text-indigo-700 p-2 rounded-full hover:bg-indigo-200 flex items-center gap-2 px-4"
                 onClick={fetchUsers}
                 disabled={refreshing}
@@ -331,7 +348,7 @@ const AdminPage = () => {
                 <RefreshCw size={16} className={`${refreshing ? 'animate-spin' : ''}`} />
                 <span className="hidden sm:inline">Refresh</span>
               </button>
-              <button 
+              <button
                 className="p-2 rounded-full hover:bg-gray-100"
                 onClick={handleLogout}
                 title="Logout"
@@ -411,7 +428,7 @@ const AdminPage = () => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Quick Sort Buttons */}
               <div className="flex flex-wrap gap-2">
                 <span className="text-sm text-gray-600 mr-2 self-center">Quick sort:</span>
@@ -419,11 +436,10 @@ const AdminPage = () => {
                   <button
                     key={index}
                     onClick={() => setSortConfig({ key: button.key, direction: button.direction })}
-                    className={`px-3 py-1 text-xs rounded-full border transition-colors ${
-                      sortConfig.key === button.key && sortConfig.direction === button.direction
-                        ? 'bg-indigo-100 text-indigo-700 border-indigo-300'
-                        : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
-                    }`}
+                    className={`px-3 py-1 text-xs rounded-full border transition-colors ${sortConfig.key === button.key && sortConfig.direction === button.direction
+                      ? 'bg-indigo-100 text-indigo-700 border-indigo-300'
+                      : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
+                      }`}
                   >
                     {button.icon} {button.label}
                   </button>
@@ -439,7 +455,7 @@ const AdminPage = () => {
           ) : error ? (
             <div className="p-8 text-center">
               <p className="text-red-500">{error}</p>
-              <button 
+              <button
                 className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 onClick={fetchUsers}
               >
@@ -497,7 +513,7 @@ const AdminPage = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {getSortedUsers().map(user => (
                     <React.Fragment key={user._id}>
-                      <tr 
+                      <tr
                         className={`hover:bg-gray-50 ${selectedUser && selectedUser._id === user._id ? 'bg-indigo-50' : ''}`}
                         onClick={() => handleUserSelect(user)}
                       >
@@ -518,15 +534,20 @@ const AdminPage = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {user.nextMineTime ? (
-                            <div className="flex items-center">
+                            <div className="flex flex-col">
                               {isMiningAvailable(user.nextMineTime) ? (
                                 <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                                   <CheckCircle size={14} className="mr-1" /> Available
                                 </span>
                               ) : (
-                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                  <Clock size={14} className="mr-1" /> On Cooldown
-                                </span>
+                                <>
+                                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 mb-1">
+                                    <Clock size={14} className="mr-1" /> Cooldown
+                                  </span>
+                                  <span className="text-xs text-gray-600">
+                                    {getMiningTimeRemaining(user.nextMineTime)}
+                                  </span>
+                                </>
                               )}
                             </div>
                           ) : (
@@ -542,7 +563,7 @@ const AdminPage = () => {
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <button 
+                          <button
                             className="text-indigo-600 hover:text-indigo-900 mr-3"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -553,7 +574,7 @@ const AdminPage = () => {
                           >
                             <Pencil size={16} />
                           </button>
-                          <button 
+                          <button
                             className="text-red-600 hover:text-red-900"
                             onClick={(e) => {
                               e.stopPropagation();
@@ -585,7 +606,7 @@ const AdminPage = () => {
                                   <span className="text-gray-900">{formatDate(user.createdAt)}</span>
                                 </div>
                               </div>
-                              
+
                               <div className="flex-1">
                                 {isEditingBalance ? (
                                   <div>
@@ -639,7 +660,7 @@ const AdminPage = () => {
                                     </div>
                                   </div>
                                 )}
-                                
+
                                 {user.nextMineTime && (
                                   <div className="mt-4">
                                     <h4 className="font-medium text-gray-900 mb-2">Mining Status</h4>
@@ -668,7 +689,7 @@ const AdminPage = () => {
                       )}
                     </React.Fragment>
                   ))}
-                  
+
                   {filteredUsers.length === 0 && (
                     <tr>
                       <td colSpan="7" className="px-6 py-10 text-center text-gray-500">
@@ -680,7 +701,7 @@ const AdminPage = () => {
               </table>
             </div>
           )}
-          
+
           <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
             <div className="text-sm text-gray-500">
               Showing <span className="font-medium text-gray-900">{filteredUsers.length}</span> of <span className="font-medium text-gray-900">{users.length}</span> users
