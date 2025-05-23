@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar';
-import AdComponent from '../components/AdComponet';
+import Navbar from '../components/Navbar'; 
 
 // Enhanced toast notification component
 const Toast = ({ message, type, onClose }) => {
@@ -586,8 +585,7 @@ const Dashboard = () => {
               )}
             </div>
           )}
-        </div>
-        <AdComponent />
+        </div> 
         <button
           onClick={handleLogout}
           className="px-4 mt-9 m-auto py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-200 flex items-center shadow-lg"
