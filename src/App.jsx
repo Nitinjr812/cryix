@@ -7,7 +7,7 @@ export default function App() {
   return (
     <>
       <AdsterraAds />
-      <AdComponent />
+
       <AdsterraSocialBar />
       <Approutes />
     </>

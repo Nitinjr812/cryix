@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import AdComponent from '../components/AdComponet';
 
 // Enhanced toast notification component
 const Toast = ({ message, type, onClose }) => {
@@ -299,7 +300,7 @@ const Dashboard = () => {
   }
 
   return (
-    <>  
+    <>
       <Navbar />
       <div className="min-h-screen bg-gradient-to-br from-indigo-900 to-blue-900 p-4 md:p-6">
         {toast.show && (
@@ -310,7 +311,7 @@ const Dashboard = () => {
           />
         )}
         <div className="max-w-5xl mx-auto">
-          
+
 
           <div className="bg-gray-800 bg-opacity-50 rounded-xl p-6 md:p-8 shadow-2xl backdrop-blur-sm mb-6 border border-gray-700">
             <div className="flex flex-col md:flex-row justify-between items-center">
@@ -586,6 +587,7 @@ const Dashboard = () => {
             </div>
           )}
         </div>
+        <AdComponent />
         <button
           onClick={handleLogout}
           className="px-4 mt-9 m-auto py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-200 flex items-center shadow-lg"

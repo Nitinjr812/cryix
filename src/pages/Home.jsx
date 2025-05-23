@@ -8,6 +8,7 @@ import Mining from '../components/Mining';
 import Footer from '../components/Footer';
 import RoadmapItem from '../components/RoadmapItem';
 import FAQSection from './FAQSection';
+import AdComponent from '../components/AdComponet';
 
 const Home = () => {
     return (
@@ -48,6 +49,7 @@ const Home = () => {
                         </motion.button>
                     </div>
                 </motion.section>
+                <AdComponent/>
                 {/* -----faq's----- */}
                 <FAQSection/>
 

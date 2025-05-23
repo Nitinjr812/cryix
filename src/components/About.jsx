@@ -85,6 +85,7 @@ const About = () => {
                     </motion.div>
                 ))}
             </div>
+            <AdComponent />
         </section>
     )
 }
