@@ -1,8 +1,7 @@
 import { motion } from 'framer-motion'
 import React from 'react'
 import { FaArrowRight } from 'react-icons/fa'
-import { Link } from 'react-router-dom' // or use Next.js Link if applicable
-
+import { Link } from 'react-router-dom'
 const About = () => {
     return (
         <section id="about" className="container mx-auto px-6 py-20">
@@ -17,9 +16,7 @@ const About = () => {
                 <div className="w-20 h-1 bg-cyan-500 mx-auto mb-8"></div>
                 <p className="text-gray-300 max-w-2xl mx-auto mb-8">
                     Discover the future of cryptocurrency with Cryvix Coin's revolutionary technology.
-                </p>
-                
-                {/* Learn More Button with Arrow Icon */}
+                </p> 
                 <motion.div 
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

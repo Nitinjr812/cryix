@@ -7,7 +7,6 @@ function AdsterraSocialBar() {
         script.type = "text/javascript";
         script.async = true;
         document.body.appendChild(script);
-
         return () => {
             document.body.removeChild(script);
         };
@@ -15,5 +14,4 @@ function AdsterraSocialBar() {
 
     return null;
 }
-
 export default AdsterraSocialBar;
