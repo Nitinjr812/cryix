@@ -84,8 +84,7 @@ const About = () => {
                         <p className="text-gray-300">{feature.desc}</p>
                     </motion.div>
                 ))}
-            </div>
-            <AdComponent />
+            </div> 
         </section>
     )
 }

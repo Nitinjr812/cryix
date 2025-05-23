@@ -8,8 +8,7 @@ import Mining from '../components/Mining';
 import Footer from '../components/Footer';
 import RoadmapItem from '../components/RoadmapItem';
 import FAQSection from './FAQSection';
-import AdComponent from '../components/AdComponet';
-
+ 
 const Home = () => {
     return (
         <>
@@ -48,8 +47,7 @@ const Home = () => {
                             Start Mining Now - It's Free!
                         </motion.button>
                     </div>
-                </motion.section>
-                <AdComponent/>
+                </motion.section> 
                 {/* -----faq's----- */}
                 <FAQSection/>
 
