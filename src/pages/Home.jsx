@@ -8,6 +8,7 @@ import Mining from '../components/Mining';
 import Footer from '../components/Footer';
 import RoadmapItem from '../components/RoadmapItem';
 import FAQSection from './FAQSection';
+import AdsterraBanner from '../components/AdsterraBanner';
  
 const Home = () => {
     return (
@@ -50,6 +51,7 @@ const Home = () => {
                 </motion.section> 
                 {/* -----faq's----- */}
                 <FAQSection/>
+                <AdsterraBanner/>
 
                 {/* Footer */}
                 <Footer />
